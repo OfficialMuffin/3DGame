@@ -1,0 +1,77 @@
+[gd_scene load_steps=16 format=3 uid="uid://dvqimn238l8u0"]
+
+[ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain.gd" id="1_qrhlu"]
+[ext_resource type="Resource" path="res://TerrainData/data.hterrain" id="2_efplv"]
+[ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain_texture_set.gd" id="3_x3088"]
+[ext_resource type="Texture2D" uid="uid://dxdykcngqct8m" path="res://main_slot0_albedo_bump.png" id="4_h2fux"]
+[ext_resource type="Texture2D" uid="uid://c65qdicyqusa3" path="res://main_slot1_albedo_bump.png" id="5_fseob"]
+[ext_resource type="Texture2D" uid="uid://d03p5o0krkmjd" path="res://main_slot0_normal_roughness.png" id="6_j22ht"]
+[ext_resource type="Texture2D" uid="uid://do3vmf7vkicbr" path="res://main_slot1_normal_roughness.png" id="7_7r6aq"]
+[ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain_detail_layer.gd" id="8_4g5qx"]
+[ext_resource type="Texture2D" uid="uid://6jmdwj3vn6m0" path="res://addons/zylann.hterrain/tools/icons/icon_detail_layer_node.svg" id="9_pin4w"]
+[ext_resource type="PackedScene" uid="uid://b3m5l7me2afjs" path="res://Player.tscn" id="10_7sfkp"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_na4qe"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_6ouql"]
+sky_material = SubResource("ProceduralSkyMaterial_na4qe")
+
+[sub_resource type="Environment" id="Environment_i0104"]
+background_mode = 2
+sky = SubResource("Sky_6ouql")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="Resource" id="Resource_reg3c"]
+script = ExtResource("3_x3088")
+mode = 0
+textures = [[ExtResource("4_h2fux"), ExtResource("5_fseob")], [ExtResource("6_j22ht"), ExtResource("7_7r6aq")]]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_m47sk"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_i0104")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 99.3219, 56.6362, -0.316807)
+shadow_enabled = true
+
+[node name="HTerrain" type="Node3D" parent="."]
+script = ExtResource("1_qrhlu")
+map_scale = Vector3(0.5, 0.45, 0.5)
+centered = true
+_terrain_data = ExtResource("2_efplv")
+chunk_size = 32
+collision_enabled = true
+collision_layer = 1
+collision_mask = 1
+shader_type = "Classic4Lite"
+custom_shader = null
+custom_globalmap_shader = null
+texture_set = SubResource("Resource_reg3c")
+render_layers = 1
+cast_shadow = 1
+shader_params/u_ground_uv_scale = 20
+shader_params/u_depth_blending = true
+shader_params/u_triplanar = null
+shader_params/u_tile_reduction = null
+
+[node name="HTerrainDetailLayer" type="Node3D" parent="HTerrain"]
+script = ExtResource("8_4g5qx")
+shader_params/u_globalmap_tint_bottom = null
+shader_params/u_globalmap_tint_top = null
+shader_params/u_bottom_ao = null
+shader_params/u_instance_scale = null
+shader_params/u_roughness = null
+metadata/_editor_icon = ExtResource("9_pin4w")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_m47sk")
+
+[node name="Player" parent="." instance=ExtResource("10_7sfkp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.0107, 0)
+linear_damp = 3.0
